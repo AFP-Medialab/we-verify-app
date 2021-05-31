@@ -23,7 +23,7 @@ const useGetImages = (url) => {
             dispatch(setForensicsLoading(false));
         };
         
-        
+        /*
         const getResult = (hash) => {
             //console.log("TEST3");
             axios.get("https://mever.iti.gr/envisu4/api/v4/images/reports/" + hash)
@@ -40,9 +40,9 @@ const useGetImages = (url) => {
                     handleError("forensic_error_" + error.status);
                 })
         };
-        
+        */
 
-        /*
+        
         const getResult = (hash) => {
             //console.log("TEST3");
             axios.get("https://mever.iti.gr/envisu4/api/v4/images/reports/" + hash)
@@ -61,13 +61,61 @@ const useGetImages = (url) => {
                             item[0] == "zero_report" ||
                                 item[0] == "ghost_report" ||
                                 item[0] == "cagi_report" ||
+                            */
+
+                                
+                            if (item[0] == "zero_report"){
+                                axios.get("https://mever.iti.gr/envisu4/utils/mask?url=" + item[1].forgery)
+                                    .then(response2 => {
+                                        if (response2.data != null) {
+                                            //console.log(response2.data);
+                                            item[1].forgery = response2.data.mask;
+
+                                        } else {
+                                            handleError("forensic_error_" + response.data.status);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        handleError("forensic_error_" + error.status);
+                                    })
+                            }
+
+                            if (item[0] == "ghost_report") {
+                                axios.get("https://mever.iti.gr/envisu4/utils/mask?url=" + item[1].maps[0])
+                                    .then(response2 => {
+                                        if (response2.data != null) {
+                                            //console.log(response2.data);
+                                            item[1].maps[0] = response2.data.mask;
+
+                                        } else {
+                                            handleError("forensic_error_" + response.data.status);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        handleError("forensic_error_" + error.status);
+                                    })
+                            }
+
+                            if (item[0] == "cagi_report") {
+                                axios.get("https://mever.iti.gr/envisu4/utils/mask?url=" + item[1].mapG)
+                                    .then(response2 => {
+                                        if (response2.data != null) {
+                                            //console.log(response2.data);
+                                            item[1].mapG = response2.data.mask;
+
+                                        } else {
+                                            handleError("forensic_error_" + response.data.status);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        handleError("forensic_error_" + error.status);
+                                    })
+                            }
 
                             
 
-                            
 
-
-                            if (
+                            else if (
                                 item[0] == "adq1_report" ||
                                 item[0] == "dct_report" ||
                                 item[0] == "blk_report" ||
@@ -78,8 +126,8 @@ const useGetImages = (url) => {
                                 item[0] == "cmfd_report" ||
                                 item[0] == "rcmfd_report") {
 
-                                    console.log("filtro");
-                                    console.log(item);
+                                    //console.log("filtro");
+                                    //console.log(item);
                                     //item[1].completed = false;
                                     //console.log(response.data.get("adq1_report"));
                                     
@@ -87,13 +135,13 @@ const useGetImages = (url) => {
                                     axios.get("https://mever.iti.gr/envisu4/utils/mask?url=" + item[1].map)
                                         .then(response2 => {
                                             if (response2.data != null) {
-                                                console.log(response2.data);
+                                                //console.log(response2.data);
                                                 item[1].map = response2.data.mask;
 
                                                 if (item[0] == "rcmfd_report"){
-                                                    console.log("Response");
+                                                    //console.log("Response");
 
-                                                    console.log(response.data);
+                                                    //console.log(response.data);
                                                     dispatch(setForensicsResult(url, response.data, false, false));
                                                 }
 
@@ -106,7 +154,10 @@ const useGetImages = (url) => {
                                             handleError("forensic_error_" + error.status);
                                         })
                                         
-                                }
+                            }
+
+
+
                         }
                     
                         
@@ -128,7 +179,7 @@ const useGetImages = (url) => {
                                         handleError("forensic_error_" + error.status);
                                     })
                                 
-
+                                */
 
                             
                             
@@ -150,7 +201,7 @@ const useGetImages = (url) => {
         };
 
 
-        */
+        
         const waitUntilFinish = (id) => {
             //console.log("TEST2");
             axios.get("https://mever.iti.gr/envisu4/api/v4/images/jobs/" + id)

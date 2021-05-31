@@ -716,6 +716,7 @@ const ForensicResults = (props) => {
                                                                             <CardMedia
                                                                                 className={classes.imageFilter}
                                                                                 image={value.map[value.currentDisplayed]} 
+                                                                                style={{ border: "1px solid" }}
                                                                             />
 
                                                                             <div className={classes.imageOverlay} >
@@ -761,6 +762,7 @@ const ForensicResults = (props) => {
                                                                             <CardMedia
                                                                                 className={classes.imageFilter}
                                                                                 image={value.map}
+                                                                                style={{ border: "1px solid"}}
                                                                             />
 
                                                                             <div className={classes.imageOverlay} >
