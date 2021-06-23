@@ -82,6 +82,7 @@ const analysisVideo = function(word){
     }
 };
 
+
 const imageMagnifier = function(word){
     let url = getUrlImg(word);
     if (url !== "") {
@@ -124,14 +125,14 @@ const imageReversesearch = function(word){
 };
 
 const imageReversesearchDBKF = function(word){
-    let search_url = "http://weverify-demo.ontotext.com/#!/similaritySearchResults&params=";
+    let search_url = "http://weverify-demo.ontotext.com/#!/similaritySearchResults&type=Images&params=";
     let img = getUrlImg(word);
     if (img !== ""){
         let url = search_url + encodeURIComponent(img);
         window.chrome.tabs.create({url: url, selected: false});
         // Google analytics
         rightClickEvent("Image Reverse Search - DBKF (beta)", url)
-        //ga("send", "event", "ContextualMenu - Baidu", "click", url);
+        //ga("send", "event", "ContextualMenu - DBKF", "click", url);
     }
 };
 
@@ -234,6 +235,7 @@ window.chrome.contextMenus.create({
     onclick: analysisVideo,
     targetUrlPatterns: ["https://www.youtube.com/*", "https://youtu.be/*", "https://www.facebook.com/*/videos/*", "https://www.facebook.com/*", "https://twitter.com/*"]
 });
+
 
 window.chrome.contextMenus.create({
     title: "Image Magnifier",

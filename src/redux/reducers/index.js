@@ -22,7 +22,7 @@ import assistantReducer from "./assistantReducer";
 import ocrReducer from "./tools/ocrReducer";
 import defaultLanguageReducer from "./defaultLanguageReducer";
 import gifReducer from "./tools/gifReducer";
-import analysisReducerImage from "./tools/analysisReducerImage";
+import ImageAnalysisReducer from "./tools/analysisReducerImage";
 
 const allReducers = combineReducers({
     language : languageReducer,
@@ -35,7 +35,7 @@ const allReducers = combineReducers({
     error : errorReducer,
     userSession: authenticationReducer,
     analysis: analysisReducer,
-    analysisImage: analysisReducerImage,
+    analysisImage: ImageAnalysisReducer,
     forensic : forensicReducer,
     keyframes : keyframesReducer,
     magnifier: magnifierReducer,

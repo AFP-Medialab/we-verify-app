@@ -18,11 +18,10 @@ const analysisReducer = (state = defaultState, action) => {
             return {
                 ...state,
                 result: { ...state.result, 
-                    link_comments:{
-                        data:action.payload.comments,
-                        pagination:action.payload.pagination 
+                    link_comments:action.payload.comments,
+                    pagination:action.payload.pagination 
                     }, 
-                },
+                
               };
         case "SET_ANALYSIS_PAGINATION_VERIFIED_COMMENTS":
                 return {

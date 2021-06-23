@@ -25,7 +25,7 @@ const useGenerateApiUrl = (url, reprocess) => {
             return;
         }
 
-        let analysis_url = "http://mever.iti.gr/caa/api/v4/images/jobs?url=" + url.replace("&", "%26");
+        let analysis_url = "https://mever.iti.gr/caa/api/v4/images/jobs?url=" + url.replace("&", "%26");
         if (reprocess)
             analysis_url += "&reprocess=1";
 

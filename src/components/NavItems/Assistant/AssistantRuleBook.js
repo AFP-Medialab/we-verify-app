@@ -91,8 +91,8 @@ export const ASSISTANT_ACTIONS = [
     {
         title: "navbar_analysis_image",
         icon: analysisIconOff,
-        linksAccepted: [KNOWN_LINKS.YOUTUBE, KNOWN_LINKS.FACEBOOK, KNOWN_LINKS.TWITTER],
-        cTypes: [CONTENT_TYPE.VIDEO],
+        linksAccepted: [KNOWN_LINKS.FACEBOOK, KNOWN_LINKS.TWITTER],
+        cTypes: [CONTENT_TYPE.IMAGE],
         exceptions: [],
         useInputUrl: true,
         text: "analysis_text",

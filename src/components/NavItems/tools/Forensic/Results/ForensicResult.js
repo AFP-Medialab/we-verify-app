@@ -1,7 +1,6 @@
-
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
-import React, { useState, Component, useRef} from "react";
+import React, { useState, Component, useRef } from "react";
 import { useSelector } from "react-redux";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -28,28 +27,28 @@ import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import Fade from '@material-ui/core/Fade';
 import Slider from '@material-ui/core/Slider';
 import useGetGif from "../../GIF/Hooks/useGetGif";
-//import { setGifDownloading } from "../../../../../redux/actions/tools/gifActions";
+import { setStateDownloading } from "../../../../../redux/actions/tools/gifActions";
 import { useDispatch } from "react-redux";
 import useGetTransparent from "../Hooks/useGetTransparent";
-import {cleanForensicState} from "../../../../../redux/actions/tools/forensicActions"
+import { cleanForensicState } from "../../../../../redux/actions/tools/forensicActions"
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
-  
+
     return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`simple-tabpanel-${index}`}
-        aria-labelledby={`simple-tab-${index}`}
-        {...other}
-      >
-        {value === index && (
-          <Box p={3}>
-            <Typography component="span">{children}</Typography>
-          </Box>
-        )}
-      </div>
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box p={3}>
+                    <Typography component="span">{children}</Typography>
+                </Box>
+            )}
+        </div>
     );
 }
 
@@ -58,7 +57,7 @@ export class Instructions extends Component {
 
     render() {
         return (
-            <HelpOutlineIcon/>
+            <HelpOutlineIcon />
         )
     }
 
@@ -108,29 +107,24 @@ const ForensicResults = (props) => {
 
     const classes = useMyStyles();
     const keyword = useLoadLanguage("components/NavItems/tools/Forensic.tsv", tsv);
-    const results = props.result;
+    const results = props.result.filters;
+    const masks = props.masksData;
+    //console.log(results);
 
     /*
         --- COMPRESSION ---
         zero_report - Zero
         ghost_report - GHOST
         cagi_report - CAGI
-
         adq1_report - DQ
         dct_report - DCT
         blk_report - BLOCK
-
-
         --- NOISE ---
         splicebuster_report - Splicebuster
         wavelet_report - Wavelet
-
-
         --- DEEP LEARNING ---
         mantranet_report - MANTRANET
         fusion_report - FUSION
-
-
         --- CLONING ---
         cmfd_report - CMFD
         rcmfd_report - RCMFD
@@ -154,7 +148,7 @@ const ForensicResults = (props) => {
         //NOISE
         "splicebuster_report",  //6
         "wavelet_report",       //7
-        
+
         //DEEP LEARNING
         "mantranet_report", //8
         "fusion_report",    //9
@@ -162,12 +156,16 @@ const ForensicResults = (props) => {
         //CLONING
         "cmfd_report",  //10
         "rcmfd_report", //11
-        
+
         //LENSES
+        
         "ela_report",       //12
         "laplacian_report", //13
         "median_report",    //14
+        
     ];
+
+
 
     const idStartCompression = 0;
     const idStartNoise = 6;
@@ -175,33 +173,43 @@ const ForensicResults = (props) => {
     const idStartCloning = 10;
     const idStartLenses = 12;
 
+    console.log();
+
+
+    //console.log(results);
+
     const filters = useRef(filtersIDs.map((value) => {
 
         var filter;
 
         //Zero
-        if (value === "zero_report"){
+        if (value === "zero_report") {
             filter = {
                 "id": value,
                 "name": keyword("forensic_title_" + value),
                 "map": [
-                    results[value]["forgery"],
-                    results[value]["votemap"],
+                    results[value]["forgery"]["colormap"],
+                    results[value]["votemap"]["colormap"],
                 ],
                 "currentDisplayed": 0,
-                "arrows": [false,false],
+                "arrows": [false, false],
+                "mask": [
+                    results[value]["forgery"]["transparent"],
+                    results[value]["votemap"]["transparent"],
+                ],
             }
-
+            
         //GHOST
-        } else if (value === "ghost_report"){
+        }else if(value === "ghost_report") {
             filter = {
                 "id": value,
                 "name": keyword("forensic_title_" + value),
-                "map": results[value]["maps"],
+                "map": results[value]["colormap"],
                 "currentDisplayed": 0,
                 "arrows": [false, false],
+                "mask": results[value]["transparent"],
             }
-        
+
         //CAGI
         } else if (value === "cagi_report") {
             filter = {
@@ -211,23 +219,125 @@ const ForensicResults = (props) => {
                     keyword("forensic_title_cagiInversed"),
                 ],
                 "map": [
-                    results[value]["mapG"],
-                    results[value]["mapGI"],
+                    results[value]["cagiNormalReport"]["colormap"],
+                    results[value]["cagiInversedReport"]["colormap"],
                 ],
                 "currentDisplayed": 0,
                 "arrows": [false, false],
+                "mask": [
+                    results[value]["cagiNormalReport"]["transparent"],
+                    results[value]["cagiInversedReport"]["transparent"],
+                ],
             }
-        
-        //REST
-        }else{
+
+
+        //RCMFD
+        } else if (value === "rcmfd_report") {
             filter = {
                 "id": value,
                 "name": keyword("forensic_title_" + value),
-                "map": results[value]["map"],
+                "map": results[value],
+                "mask": results[value],
+            }
+            
+
+
+        //LENSES
+        } else if (value === "ela_report" || value === "laplacian_report" || value === "median_report") {
+            filter = {
+                "id": value,
+                "name": keyword("forensic_title_" + value),
+                "map": results[value],
+            }
+
+
+            /*
+        } else if (value === "dct_report") {
+            filter = {
+                "id": value,
+                "name": keyword("forensic_title_" + value),
+                "map": results[value]["colormap"],
+                "mask": masks.DCTOutput,
+            }
+        } else if (value === "blk_report") {
+            filter = {
+                "id": value,
+                "name": keyword("forensic_title_" + value),
+                "map": results[value]["colormap"],
+                "mask": masks.BLKOutput,
+            }
+        } else if (value === "splicebuster_report") {
+            filter = {
+                "id": value,
+                "name": keyword("forensic_title_" + value),
+                "map": results[value]["colormap"],
+                "mask": masks.SBOutput,
+            }
+        } else if (value === "wavelet_report") {
+            filter = {
+                "id": value,
+                "name": keyword("forensic_title_" + value),
+                "map": results[value]["colormap"],
+                "mask": masks.DWNoiseOutput,
+            }
+        } else if (value === "mantranet_report") {
+            filter = {
+                "id": value,
+                "name": keyword("forensic_title_" + value),
+                "map": results[value]["colormap"],
+                "mask": masks.MANTRANETOutput,
+            }
+        } else if (value === "fusion_report") {
+            filter = {
+                "id": value,
+                "name": keyword("forensic_title_" + value),
+                "map": results[value]["colormap"],
+                "mask": masks.FusionOutput,
+            }
+        } else if (value === "cmfd_report") {
+            filter = {
+                "id": value,
+                "name": keyword("forensic_title_" + value),
+                "map": results[value]["colormap"],
+                "mask": masks.CMFDOutput,
+            }
+        } else if (value === "rcmfd_report") {
+            filter = {
+                "id": value,
+                "name": keyword("forensic_title_" + value),
+                "map": results[value]["colormap"],
+                "mask": results[value]["map"],
+            }
+
+            */
+        } else {
+            filter = {
+                "id": value,
+                "name": keyword("forensic_title_" + value),
+                "map": results[value]["colormap"],
+                "mask": results[value]["transparent"],
             }
         }
+
+
+
         return filter;
     }));
+
+    /*
+
+    const numbersGhost = results["ghost_report"]["qualities"];
+    const ghostMasks = [];
+
+    for (var i = 0; i < numbersGhost.length; i++) {
+        const stringMask = "GhostOutput" + numbersGhost[i];
+        ghostMasks.push(masks[stringMask]);
+    }
+    */
+
+
+
+
 
     //console.log(filters);
     //console.log(results);
@@ -247,11 +357,11 @@ const ForensicResults = (props) => {
     function hideFilterHover(e) {
         setFilterHoverEnabled(false);
     }
-    
+
 
     //Button analyze new image
     //============================================================================================
-    function newImage (){
+    function newImage() {
         dispatch(cleanForensicState());
         props.resetImage();
     }
@@ -264,11 +374,11 @@ const ForensicResults = (props) => {
     const helpLenses = openHelpLenses ? 'simple-popover' : undefined;
 
 
-    function clickHelpLenses (event){
+    function clickHelpLenses(event) {
         setAnchorHelpLenses(event.currentTarget);
     }
 
-    function closeHelpLenses (){
+    function closeHelpLenses() {
         setAnchorHelpLenses(null);
     }
 
@@ -277,14 +387,14 @@ const ForensicResults = (props) => {
     //============================================================================================
     const [anchorHelpFilters, setAnchorHelpFilters] = React.useState(null);
     const openHelpFilters = Boolean(anchorHelpFilters);
-    const helpFilters = openHelpFilters? 'simple-popover' : undefined;
+    const helpFilters = openHelpFilters ? 'simple-popover' : undefined;
 
 
     function clickHelpFilters(event) {
         setAnchorHelpFilters(event.currentTarget);
     }
 
-    function closeHelpFilters(){
+    function closeHelpFilters() {
         setAnchorHelpFilters(null);
     }
 
@@ -292,20 +402,20 @@ const ForensicResults = (props) => {
     //Navigation and Gif of filters
     //============================================================================================
 
-    function arrowsToDisplay (filter){
+    function arrowsToDisplay(filter) {
         //left, right
         var arrows = [false, false]
         var filterData = filters.current.find(x => x.id === filter);
-        if (filterData.map.length === 1){
+        if (filterData.map.length === 1) {
             return;
         }
-        if (filterData.currentDisplayed === 0){
+        if (filterData.currentDisplayed === 0) {
             arrows[1] = true;
             filters.current.find(x => x.id === filter).arrows = arrows;
-        } else if (filterData.currentDisplayed === filterData.map.length -1){
+        } else if (filterData.currentDisplayed === filterData.map.length - 1) {
             arrows[0] = true;
             filters.current.find(x => x.id === filter).arrows = arrows;
-        }else{
+        } else {
             arrows[0] = true;
             arrows[1] = true;
             filters.current.find(x => x.id === filter).arrows = arrows;
@@ -317,7 +427,7 @@ const ForensicResults = (props) => {
     function clickArrowFilter(filter, arrow) {
         filters.current.find(x => x.id === filter).currentDisplayed += arrow;
         arrowsToDisplay(filter);
-        displayFilterHover(filters.current.find(x => x.id === filter).map[filters.current.find(x => x.id === filter).currentDisplayed]);
+        displayFilterHover(filters.current.find(x => x.id === filter).mask[filters.current.find(x => x.id === filter).currentDisplayed]);
     }
 
 
@@ -329,36 +439,36 @@ const ForensicResults = (props) => {
     const gifImage = props.url;
     const [gifFilter, setGifFilter] = React.useState(props.url);
     const gifFilterMask = useSelector(state => state.forensic.maskUrl);
-    console.log(gifFilterMask);
+    //console.log(gifFilterMask);
 
     const [interval, setIntervalVar] = React.useState(null);
 
-    const downloading = useSelector(state => state.gif.downloading);
+    const downloading = useSelector(state => state.gif.toolState);
 
 
     const [readyTransparency, setReadyTransparency] = React.useState(false);
 
-    useGetTransparent(gifFilter, readyTransparency);
+    //nsparent(gifFilter, readyTransparency);
 
     function clickGifPopover(event, filter) {
         var url;
-        if (filter === "zero_report" || filter === "ghost_report" || filter === "cagi_report"){
-            url = filters.current.find(x => x.id === filter).map[filters.current.find(x => x.id === filter).currentDisplayed]
+        if (filter === "zero_report" || filter === "ghost_report" || filter === "cagi_report") {
+            url = filters.current.find(x => x.id === filter).mask[filters.current.find(x => x.id === filter).currentDisplayed]
             setGifFilter(url);
-            console.log(url);
+            //console.log(url);
 
             setReadyTransparency(true);
 
-        }else{
-            url = filters.current.find(x => x.id === filter).map;
+        } else {
+            url = filters.current.find(x => x.id === filter).mask;
             setGifFilter(url);
-            console.log(url);
+            //console.log(url);
 
             setReadyTransparency(true);
         }
         setIntervalVar(setInterval(() => animateFilter(), 1100));
         setAnchorGifPopover(event.currentTarget);
-        
+
     }
 
     function closeGifPopover() {
@@ -367,7 +477,7 @@ const ForensicResults = (props) => {
         setReadyTransparency(false);
     }
 
-    
+
 
 
     function animateFilter() {
@@ -398,7 +508,7 @@ const ForensicResults = (props) => {
 
     function changeValueSpeed(value) {
         console.log("Change value speed: " + value);
-        setSpeed(value*-1);
+        setSpeed(value * -1);
     }
 
     function changeSpeed(value) {
@@ -413,20 +523,21 @@ const ForensicResults = (props) => {
     const [delayGif, setDelayGif] = useState();
     //const [readyToDownload, setReadyToDownload] = useState();
 
-    useGetGif(filesForGif, delayGif, downloading);
     
 
+
     const handleDownloadGif = () => {
+        dispatch(setStateDownloading());
         var files = {
             "image1": gifImage,
             "image2": gifFilter,
         }
         setFilesForGif(files);
         setDelayGif(speed);
-        //dispatch(setGifDownloading());
+        
     };
 
-
+    useGetGif(filesForGif, delayGif, downloading);
 
 
     //const dispatch = useDispatch();
@@ -440,7 +551,6 @@ const ForensicResults = (props) => {
         console.log("blinking");
         const variable = useSelector(state => state.forensic.gifAnimation);
         console.log(variable);
-
         if(variable){
             dispatch(setForensicsGifAnimateHide());
         }else{
@@ -463,20 +573,20 @@ const ForensicResults = (props) => {
 
 
 
-    console.log("Downloading: " + downloading);
-    
+    //console.log("Downloading: " + downloading);
+
 
 
     return (
-    <div>
-        
+        <div>
+
 
             <div className={classes.newForensics}>
                 <ThemeProvider theme={theme}>
                     <Box mt={5} mb={5}>
                         <Grid container spacing={3}>
-                            
-                            <Grid item xs={6} style={{display: "flex", flexDirection: "column"}}>
+
+                            <Grid item xs={6} style={{ display: "flex", flexDirection: "column" }}>
 
                                 <Card>
                                     <CardHeader
@@ -641,7 +751,7 @@ const ForensicResults = (props) => {
 
                                                             <Typography variant="h6" gutterBottom>
                                                                 {keyword("forensic_title_what")}
-                                                        </Typography>
+                                                            </Typography>
 
                                                             <CloseIcon onClick={closeHelpFilters} />
                                                         </Grid>
@@ -659,10 +769,10 @@ const ForensicResults = (props) => {
                                     </CardHeader>
 
                                     <Tabs value={value} onChange={handleChange} indicatorColor={'primary'}>
-                                        <Tab label={keyword("forensic_family_compression_title")}/>
-                                        <Tab label={keyword("forensic_family_noise_title")}/>
-                                        <Tab label={keyword("forensic_family_ai_title")}/>
-                                        <Tab label={keyword("forensic_family_cloning_title")}/>
+                                        <Tab label={keyword("forensic_family_compression_title")} />
+                                        <Tab label={keyword("forensic_family_noise_title")} />
+                                        <Tab label={keyword("forensic_family_ai_title")} />
+                                        <Tab label={keyword("forensic_family_cloning_title")} />
                                     </Tabs>
 
 
@@ -673,31 +783,31 @@ const ForensicResults = (props) => {
                                         var textLook = "";
                                         var textIgnore = "";
 
-                                        if(valueTab === 0){
-                                            filtersTab = filters.current.slice (idStartCompression, idStartNoise);
+                                        if (valueTab === 0) {
+                                            filtersTab = filters.current.slice(idStartCompression, idStartNoise);
                                             textDescription = keyword("forensic_family_compression_description");
                                             textLook = keyword("forensic_family_compression_look");
                                             textIgnore = keyword("forensic_family_compression_ignore");
 
-                                        } else if (valueTab === 1){
+                                        } else if (valueTab === 1) {
                                             filtersTab = filters.current.slice(idStartNoise, idStartDeepLearning);
                                             textDescription = keyword("forensic_family_noise_description");
                                             textLook = keyword("forensic_family_noise_look");
                                             textIgnore = keyword("forensic_family_noise_ignore");
 
-                                        } else if (valueTab === 2){
+                                        } else if (valueTab === 2) {
                                             filtersTab = filters.current.slice(idStartDeepLearning, idStartCloning);
                                             textDescription = keyword("forensic_family_ai_description");
                                             textLook = keyword("forensic_family_ai_look");
                                             textIgnore = keyword("forensic_family_ai_ignore");
 
-                                        }else{
+                                        } else {
                                             filtersTab = filters.current.slice(idStartCloning, idStartLenses);
                                             textDescription = keyword("forensic_family_cloning_description");
                                             textLook = keyword("forensic_family_cloning_look");
                                             textIgnore = keyword("forensic_family_cloning_ignore");
 
-                                        }    
+                                        }
 
                                         return (
 
@@ -705,90 +815,96 @@ const ForensicResults = (props) => {
                                                 <Grid container spacing={3}>
 
                                                     {filtersTab.map((value, key) => {
-                                                        if ((value.id === "zero_report" || value.id === "ghost_report" || value.id === "cagi_report")){
+                                                        if ((value.id === "zero_report" || value.id === "ghost_report" || value.id === "cagi_report")) {
                                                             arrowsToDisplay(value.id);
                                                         }
+
+                                                        /*
+                                                        if (value.id === "ghost_report") {
+                                                            value.mask = ghostMasks;
+                                                        }
+                                                        */
 
 
                                                         return (
                                                             <Grid key={key} item xs={4} >
 
-                                                                {(value.id === "zero_report" || value.id === "ghost_report" || value.id === "cagi_report")      
-                                                                    ? <div 
+                                                                {(value.id === "zero_report" || value.id === "ghost_report" || value.id === "cagi_report")
+                                                                    ? <div
                                                                         className={classes.imageOverlayWrapper}
-                                                                        onMouseOver={() => displayFilterHover(value.map[value.currentDisplayed])}
+                                                                        onMouseOver={() => displayFilterHover(value.mask[value.currentDisplayed])}
                                                                         onMouseLeave={hideFilterHover}>
 
-                                                                            <CardMedia
-                                                                                className={classes.imageFilter}
-                                                                                image={value.map[value.currentDisplayed]} 
-                                                                            />
+                                                                        <CardMedia
+                                                                            className={classes.imageFilter}
+                                                                            image={value.map[value.currentDisplayed]}
+                                                                        />
 
-                                                                            <div className={classes.imageOverlay} >
+                                                                        <div className={classes.imageOverlay} >
 
-                                                                                <Grid
-                                                                                    container
-                                                                                    direction="row"
-                                                                                    justify="space-around"
-                                                                                    alignItems="center">
-                                                                                    
-                                                                                    {value.arrows[0] 
-                                                                                    ? <Fab size="small" style={{ backgroundColor: "#ffffff" }} onClick={() => clickArrowFilter(value.id,-1)}>
-                                                                                            <NavigateBeforeIcon style={{ color: "#000000" }} />
-                                                                                         </Fab>
+                                                                            <Grid
+                                                                                container
+                                                                                direction="row"
+                                                                                justify="space-around"
+                                                                                alignItems="center">
 
-                                                                                        : <Fab size="small" style={{visibility: "hidden"}}>
-                                                                                            <NavigateBeforeIcon/>
-                                                                                        </Fab>
-                                                                                    }
-                                                                                <Fab size="medium" style={{ backgroundColor: "#ffffff" }} onClick={(e) => clickGifPopover(e, value.id)}>
-                                                                                        <GifIcon style={{ color: "#000000" }} />
+                                                                                {value.arrows[0]
+                                                                                    ? <Fab size="small" style={{ backgroundColor: "#ffffff" }} onClick={() => clickArrowFilter(value.id, -1)}>
+                                                                                        <NavigateBeforeIcon style={{ color: "#000000" }} />
                                                                                     </Fab>
 
-                                                                                    {value.arrows[1]
-                                                                                    ? <Fab size="small" style={{ backgroundColor: "#ffffff" }} onClick={() => clickArrowFilter(value.id, 1)}>
-                                                                                            <NavigateNextIcon style={{ color: "#000000" }} />
-                                                                                        </Fab>
+                                                                                    : <Fab size="small" style={{ visibility: "hidden" }}>
+                                                                                        <NavigateBeforeIcon />
+                                                                                    </Fab>
+                                                                                }
+                                                                                <Fab size="medium" style={{ backgroundColor: "#ffffff" }} onClick={(e) => clickGifPopover(e, value.id)}>
+                                                                                    <GifIcon style={{ color: "#000000" }} />
+                                                                                </Fab>
 
-                                                                                        : <Fab size="small" style={{visibility: "hidden" }}>
-                                                                                            <NavigateNextIcon/>
-                                                                                        </Fab>
-                                                                                    }
-                                                                                </Grid>
-                                                                            </div>
-                                                                              
+                                                                                {value.arrows[1]
+                                                                                    ? <Fab size="small" style={{ backgroundColor: "#ffffff" }} onClick={() => clickArrowFilter(value.id, 1)}>
+                                                                                        <NavigateNextIcon style={{ color: "#000000" }} />
+                                                                                    </Fab>
+
+                                                                                    : <Fab size="small" style={{ visibility: "hidden" }}>
+                                                                                        <NavigateNextIcon />
+                                                                                    </Fab>
+                                                                                }
+                                                                            </Grid>
+                                                                        </div>
+
                                                                     </div>
 
                                                                     : <div
                                                                         className={classes.imageOverlayWrapper}
-                                                                        onMouseOver={() => displayFilterHover(value.map)}
+                                                                        onMouseOver={() => displayFilterHover(value.mask)}
                                                                         onMouseLeave={hideFilterHover}>
 
-                                                                            <CardMedia
-                                                                                className={classes.imageFilter}
-                                                                                image={value.map}
-                                                                            />
+                                                                        <CardMedia
+                                                                            className={classes.imageFilter}
+                                                                            image={value.map}
+                                                                        />
 
-                                                                            <div className={classes.imageOverlay} >
+                                                                        <div className={classes.imageOverlay} >
 
-                                                                                <Grid
-                                                                                    container
-                                                                                    direction="row"
-                                                                                    justify="space-around"
-                                                                                    alignItems="center">
+                                                                            <Grid
+                                                                                container
+                                                                                direction="row"
+                                                                                justify="space-around"
+                                                                                alignItems="center">
 
-                                                                                <Fab size="medium" style={{ backgroundColor: "#ffffff" }} onClick={(e) => clickGifPopover(e,value.id)}>
-                                                                                        <GifIcon style={{ color: "#000000" }} />
-                                                                                    </Fab>
+                                                                                <Fab size="medium" style={{ backgroundColor: "#ffffff" }} onClick={(e) => clickGifPopover(e, value.id)}>
+                                                                                    <GifIcon style={{ color: "#000000" }} />
+                                                                                </Fab>
 
-                                                                                </Grid>
-                                                                            </div>
+                                                                            </Grid>
+                                                                        </div>
 
                                                                     </div>
                                                                 }
-                                                                                            
-                                                                
-                                                                {(value.id === "cagi_report") 
+
+
+                                                                {(value.id === "cagi_report")
                                                                     ? <Box align="center" width="100%">{value.name[value.currentDisplayed]}</Box>
                                                                     : <Box align="center" width="100%">{value.name}</Box>
                                                                 }
@@ -831,7 +947,7 @@ const ForensicResults = (props) => {
                             </Grid>
 
                         </Grid>
-                                    
+
 
 
                         <Popover
@@ -862,7 +978,7 @@ const ForensicResults = (props) => {
                                 vertical: 'center',
                                 horizontal: 'center',
                             }}
-                        >   
+                        >
 
                             <Box p={3}>
                                 <Grid
@@ -891,13 +1007,13 @@ const ForensicResults = (props) => {
                                             component="img"
                                             className={classes.imagesGifFilter}
                                             style={{ display: "none" }}
-                                            image={gifFilterMask}
+                                            image={gifFilter}
                                             id="gifFilterElement"
                                         />
                                     }
                                 </Box>
 
-                                
+
 
                                 <Grid
                                     container
@@ -911,20 +1027,20 @@ const ForensicResults = (props) => {
                                         Speed of the animation
                                     </Typography>
 
-                                    
-                                        <Slider
-                                            defaultValue={-1100}
-                                            aria-labelledby="discrete-slider"
-                                            step={300}
-                                            marks={marks}
-                                            min={-1700}
-                                            max={-500}
-                                            scale={x => -x}
-                                            onChange={(e, val) => changeValueSpeed(val)}
-                                            onChangeCommitted={(e) => changeSpeed(speed)}
-                                            className={classes.sliderClass}
-                                        />
-                                    
+
+                                    <Slider
+                                        defaultValue={-1100}
+                                        aria-labelledby="discrete-slider"
+                                        step={300}
+                                        marks={marks}
+                                        min={-1700}
+                                        max={-500}
+                                        scale={x => -x}
+                                        onChange={(e, val) => changeValueSpeed(val)}
+                                        onChangeCommitted={(e) => changeSpeed(speed)}
+                                        className={classes.sliderClass}
+                                    />
+
 
 
                                     <Box m={2} />
@@ -945,8 +1061,7 @@ const ForensicResults = (props) => {
 
             </div>
 
-    </div>
+        </div>
     )
 };
 export default ForensicResults;
-

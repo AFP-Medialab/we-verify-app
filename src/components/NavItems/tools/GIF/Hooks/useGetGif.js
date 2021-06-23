@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { setError } from "../../../../../redux/actions/errorActions";
 import useLoadLanguage from "../../../../../Hooks/useLoadLanguage";
 import tsv from "../../../../../LocalDictionary/components/NavItems/tools/Forensic.tsv";
-//import { setGifLoading, setGifDownloaded } from "../../../../../redux/actions/tools/gifActions";
+import { setStateBackResults } from "../../../../../redux/actions/tools/gifActions";
 import { saveAs } from 'file-saver';
 import { useSelector } from "react-redux";
 
@@ -29,10 +29,10 @@ const useGetGif = (images, delayInput, downloading) => {
             console.log(response.data);
             const file = new Blob([response.data], { type: 'image/gif' });
             saveAs(file, "image.gif");
-            //dispatch(setGifDownloaded());
+            dispatch(setStateBackResults());
         }
 
-        if (images && delayInput && downloading) {
+        if (images && delayInput && downloading === 7) {
             var body = {
                 inputURLs: [
                     images.image1,

@@ -1,26 +1,35 @@
 export const setForensicsResult = (url, result, notification, loading) => {
     return {
-        type : "SET_FORENSIC_RESULT",
-        payload : {
-            notification : notification,
-            loading : loading,
-            url : url,
-            result : result,
+        type: "SET_FORENSIC_RESULT",
+        payload: {
+            notification: notification,
+            loading: loading,
+            url: url,
+            result: result,
             gifAnimation: false,
+            
         }
+    }
+};
+//masks: masks,
+export const setForensicMask = (masks) => {
+    return {
+        type: "SET_FORENSIC_MASK",
+        payload: masks
+
     }
 };
 
 export const setForensicsLoading = (loading) => {
     return {
-        type : "SET_FORENSIC_LOADING",
-        payload : loading
+        type: "SET_FORENSIC_LOADING",
+        payload: loading
     }
 };
 
 export const cleanForensicState = () => {
     return {
-        type : "FORENSIC_CLEAN_STATE"
+        type: "FORENSIC_CLEAN_STATE"
     }
 };
 

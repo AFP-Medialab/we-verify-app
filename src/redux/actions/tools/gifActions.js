@@ -28,11 +28,26 @@ export const setStateLoading = () => {
     }
 };
 
+export const setStateDownloading = () => {
+    return {
+        type: "SET_STATE_DOWNLOADING"
+    }
+};
+
 export const setStateError = () => {
     return {
         type: "SET_STATE_ERROR"
     }
 };
+
+
+export const setStateBackResults= () => {
+    return {
+        type: "SET_STATE_BACKRESULTS"
+    }
+};
+
+
 
 export const setStateShow = (urlImg1, urlImg2) => {
     return {

@@ -30,6 +30,10 @@ import axios from "axios";
 import { setAnalysisComments } from "../../../../../redux/actions/tools/analysisActions";
 import {setAnalysisLinkComments} from "../../../../../redux/actions/tools/analysisActions"
 import {setAnalysisVerifiedComments} from "../../../../../redux/actions/tools/analysisActions"
+import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
+import SkipNextIcon from '@material-ui/icons/SkipNext';
+import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
 
 const FacebookResults = (props) => {
   const classes = useMyStyles();
@@ -41,20 +45,24 @@ const FacebookResults = (props) => {
   const [count_verified_comments, setCount_verified_comments] = useState(1);
   const [count_link_comments, setCount_link_comments] = useState(1);
 
-
+  
   const reverseSearch = (website) => {
     for (let image of thumbnails) {
       ImageReverseSearch(website, image.url);
     }
-  };
-  
+  };  
   var nextPage = props.report.pagination.next;
+  const url = useState(nextPage);
+  var last_page_all_comments=Math.ceil(props.report.verification_cues.num_comments/10)
+  var last_page_verified_comments=Math.ceil(props.report.verification_cues.num_verification_comments/10)
+  var last_page_link_comments=Math.ceil(props.report.verification_cues.num_link_comments/10)
 
+  
   var index=0
   var real
 
-  for(var i=0;i<nextPage.length;i++){
-    if(nextPage[i]==="="){
+  for(var i=0;i<url[0].length;i++){
+    if(url[0][i]==="="){
       index=index+1
       if(index===2){
         real=i
@@ -62,14 +70,101 @@ const FacebookResults = (props) => {
       }
     }
   }
-  var next_page_comments=nextPage.substring(0, real+1)+(count_comments+1)+"&type=coms"
-  var previous_page_comments=nextPage.substring(0, real+1)+(count_comments-1)+"&type=coms"
-  var next_page_verified=nextPage.substring(0, real+1)+(count_verified_comments+1)+"&type=vercoms"
-  var previous_page_verified=nextPage.substring(0, real+1)+(count_verified_comments-1)+"&type=vercoms"
-  var next_page_link=nextPage.substring(0,real+1)+(count_link_comments+1)+"&type=linkcoms"
-  var previous_page_link=nextPage.substring(0,real+1)+(count_link_comments-1)+"&type=linkcoms"
+  var next_page_comments=url[0].substring(0, real+1)+(count_comments+1)+"&type=coms"
+  var previous_page_comments=url[0].substring(0, real+1)+(count_comments-1)+"&type=coms"
+  var next_page_verified=url[0].substring(0, real+1)+(count_verified_comments+1)+"&type=vercoms"
+  var previous_page_verified=url[0].substring(0, real+1)+(count_verified_comments-1)+"&type=vercoms"
+  var next_page_link=url[0].substring(0,real+1)+(count_link_comments+1)+"&type=linkcoms"
+  var previous_page_link=url[0].substring(0,real+1)+(count_link_comments-1)+"&type=linkcoms"
+  
+  var last_page_all_comments1=url[0].substring(0, real+1)+(last_page_all_comments)+"&type=coms"
+  var last_page_verified_comments1=url[0].substring(0, real+1)+(last_page_verified_comments)+"&type=vercoms"
+  var last_page_link_comments1=url[0].substring(0, real+1)+(last_page_link_comments)+"&type=linkcoms"
 
+  var first_page_all_comments1=url[0].substring(0, real+1)+(1)+"&type=coms"
+  var first_page_verified_comments1=url[0].substring(0, real+1)+(1)+"&type=vercoms"
+  var first_page_link_comments1=url[0].substring(0, real+1)+(1)+"&type=linkcoms"
+  
  
+  const handleClick_first_page = (event) => {
+    if(count_comments!==1){
+      
+      console.log("CALL ",axios.get("https://mever.iti.gr" + first_page_all_comments1))
+      axios.get("https://mever.iti.gr" + first_page_all_comments1).then((response) => {
+        console.log("response.data ",response.data)
+        setCount_comments(1);
+        dispatch(setAnalysisComments(response.data));
+        
+      });
+    }
+  };
+  const handleClick_last_page = (event) => {
+    if(count_link_comments!==last_page_all_comments){
+    
+    
+      console.log("CALL ",axios.get("https://mever.iti.gr" + last_page_all_comments1))
+      axios.get("https://mever.iti.gr" + last_page_all_comments1).then((response) => {
+        console.log("response.data ",response.data)
+        setCount_comments(last_page_all_comments);
+        dispatch(setAnalysisComments(response.data));
+      });
+    }
+  };
+
+  const handleClick_first_page1 = (event) => {
+    if(count_link_comments!==1){
+      
+      console.log("CALL ",axios.get("https://mever.iti.gr" + first_page_link_comments1))
+      axios.get("https://mever.iti.gr" + first_page_link_comments1).then((response) => {
+        console.log("response.data ",response.data)
+        setCount_link_comments(1);
+        dispatch(setAnalysisLinkComments(response.data));
+        
+      });
+    }
+  };
+  const handleClick_last_page1 = (event) => {
+    if(count_link_comments!==last_page_link_comments){
+    
+    
+      console.log("CALL ",axios.get("https://mever.iti.gr" + last_page_link_comments1))
+      axios.get("https://mever.iti.gr" + last_page_link_comments1).then((response) => {
+        console.log("response.data ",response.data)
+          setCount_link_comments(last_page_link_comments);
+          dispatch(setAnalysisLinkComments(response.data));
+ 
+      });
+    }
+  };
+
+  const handleClick_first_page2 = (event) => {
+    if(count_verified_comments!==1){
+      
+      console.log("CALL ",axios.get("https://mever.iti.gr" + first_page_verified_comments1))
+      axios.get("https://mever.iti.gr" + first_page_verified_comments1).then((response) => {
+        console.log("response.data ",response.data)
+        setCount_verified_comments(1);
+        dispatch(setAnalysisVerifiedComments(response.data));
+        
+      });
+    }
+  };
+  const handleClick_last_page2 = (event) => {
+    if(count_verified_comments!==last_page_verified_comments){
+    
+    
+      console.log("CALL ",axios.get("https://mever.iti.gr" + last_page_verified_comments1))
+      axios.get("https://mever.iti.gr" + last_page_verified_comments1).then((response) => {
+        console.log("response.data ",response.data)
+        setCount_verified_comments(last_page_verified_comments);
+        dispatch(setAnalysisVerifiedComments(response.data));
+ 
+      });
+    }
+  };
+
+
+
   const handleClick_next_page = (event) => {
     console.log("page_verified INSIDE ",next_page_comments)
       console.log("CALL ",axios.get("https://mever.iti.gr" + next_page_comments))
@@ -82,7 +177,7 @@ const FacebookResults = (props) => {
         }
       });
   };
-  
+
   const handleClick_previous_page = (event) => {
       if(count_comments>1){
       setCount_comments(count_comments - 1);
@@ -165,9 +260,12 @@ const FacebookResults = (props) => {
   const verificationComments = report.comments ? report.comments : [];
   const linkComments = report.link_comments ? report.link_comments : [];
   const verifiedComments = report.verification_comments ? report.verification_comments : [];
+  console.log("linkComments ",linkComments)
+
+  
 
   //console.log("linkComments ",linkComments)
-  console.log("verifiedComments ",verifiedComments)
+ // console.log("verifiedComments ",verifiedComments)
 
   const thumbnails = report.thumbnails.others;
 
@@ -186,7 +284,7 @@ const FacebookResults = (props) => {
               <CloseResult onClick={() => dispatch(cleanAnalysisState())} />
               <Typography variant={"h5"}>{report.video.title}</Typography>
               <Typography variant={"subtitle1"}>
-                {report.video.created_time}
+              {report.video.created_time}
               </Typography>
               <img
                 src={report.thumbnails.preferred.url}
@@ -208,7 +306,8 @@ const FacebookResults = (props) => {
                 component="p"
                 className={classes.text}
               >
-                {report.video.description}
+              {report.video.description}
+
               </Typography>
               <Box m={2} />
               {report["video"] && (
@@ -221,12 +320,12 @@ const FacebookResults = (props) => {
                     {report.video_id && (
                       <TableRow>
                         <TableCell component="th" scope="row">
-                          {keyword("facebook_video_name_1")}
+                        {keyword("facebook_video_name_1")}
                         </TableCell>
                         <TableCell align="right">{report.video_id}</TableCell>
                       </TableRow>
                     )}
-                    {
+{
                       //report.video.title &&
                       <TableRow>
                         <TableCell component="th" scope="row">
@@ -313,7 +412,7 @@ const FacebookResults = (props) => {
                     aria-label="a dense table"
                   >
                     <TableBody>
-                      {report.verification_cues.num_comments && (
+                    {report.verification_cues.num_comments && (
                         <TableRow>
                           <TableCell component="th" scope="row">
                             {keyword("facebook_comment_name_1")}
@@ -334,153 +433,21 @@ const FacebookResults = (props) => {
                           </TableCell>
                         </TableRow>
                       )}
+                      {report.verification_cues.num_link_comments !==
+                        0 && (
+                        <TableRow>
+                          <TableCell component="th" scope="row">
+                            {keyword("comments_links")}
+                          </TableCell>
+                          <TableCell align="right">
+                            {report.verification_cues.num_link_comments}
+                          </TableCell>
+                        </TableRow>
+                      )}
+                      
                     </TableBody>
                   </Table>
                 )}
-                <Box m={2} />
-                {
-                  //linkComments.length > 0 &&
-                  <Accordion>
-                    <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel1bh-content"
-                      id="panel1bh-header"
-                    >
-                      <Typography className={classes.heading}>
-                        {keyword("link_comments")}
-                      </Typography>
-                      <Typography className={classes.secondaryHeading}>
-                        {" "}
-                        ...
-                      </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <Table
-                        className={classes.table}
-                        size="small"
-                        aria-label="a dense table"
-                      >
-                        <TableHead>
-                          <TableRow>
-                            <TableCell className={styles.size} align="center">
-                              {keyword("twitter_user_name_13")}
-                            </TableCell>
-                            <TableCell align="center">
-                              {keyword("twitter_user_name_5")}
-                            </TableCell>
-                          </TableRow>
-                        </TableHead>
-
-                        <TableBody className={styles.container}>
-                          {linkComments.map((comment, key) => {
-                            return (
-                              <TableRow key={key}>
-                                <TableCell align="center" size="small">
-                                  {comment.publishedAt}
-                                </TableCell>
-                                <TableCell align="left" size="small">
-                                  {comment.textDisplay}
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })}
-                        </TableBody>
-                      </Table>
-                    </AccordionDetails>
-                    <Box>{keyword("page_number") + count_link_comments}</Box>
-                    <Button
-                      variant="contained"
-                      aria-controls="simple-menu"
-                      aria-haspopup="true"
-                      onClick={handleClick_previous_page1}
-                    >
-                      {keyword("previous_button")}
-                    </Button>
-                    <Button
-                      variant="contained"
-                      aria-controls="simple-menu"
-                      aria-haspopup="true"
-                      onClick={handleClick_next_page1}
-                    >
-                      {keyword("next_button")}
-                    </Button>
-                  </Accordion>
-                }
-
-
-                <Box m={2} />
-                {
-                  //linkComments.length > 0 &&
-                  <Accordion>
-                    <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel1bh-content"
-                      id="panel1bh-header"
-                    >
-                      <Typography className={classes.heading}>
-                        {keyword("api_comments_verified")}
-                      </Typography>
-                      <Typography className={classes.secondaryHeading}>
-                        {" "}
-                        ...
-                      </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <Table
-                        className={classes.table}
-                        size="small"
-                        aria-label="a dense table"
-                      >
-                        <TableHead>
-                          <TableRow>
-                            <TableCell className={styles.size} align="center">
-                              {keyword("twitter_user_name_13")}
-                            </TableCell>
-                            <TableCell align="center">
-                              {keyword("twitter_user_name_5")}
-                            </TableCell>
-                          </TableRow>
-                        </TableHead>
-
-                        <TableBody className={styles.container}>
-                          {verifiedComments.map((comment, key) => {
-                            return (
-                              <TableRow key={key}>
-                                <TableCell align="center" size="small">
-                                  {comment.publishedAt}
-                                </TableCell>
-                                <TableCell align="left" size="small">
-                                  {comment.textDisplay}
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })}
-                        </TableBody>
-                      </Table>
-                    </AccordionDetails>
-                    <Box>{keyword("page_number") + count_verified_comments}</Box>
-                    <Button
-                      variant="contained"
-                      aria-controls="simple-menu"
-                      aria-haspopup="true"
-                      onClick={handleClick_previous_page2}
-                    >
-                      {keyword("previous_button")}
-                    </Button>
-                    <Button
-                      variant="contained"
-                      aria-controls="simple-menu"
-                      aria-haspopup="true"
-                      onClick={handleClick_next_page2}
-                    >
-                      {keyword("next_button")}
-                    </Button>
-                  </Accordion>
-                }
-
-
-
-
                 <Box m={2} />
                 {verificationComments.length > 0 && (
                   <Accordion>
@@ -494,7 +461,7 @@ const FacebookResults = (props) => {
                       </Typography>
                       <Typography className={classes.secondaryHeading}>
                         {" "}
-                        ...
+                        
                       </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
@@ -505,6 +472,10 @@ const FacebookResults = (props) => {
                       >
                         <TableHead>
                           <TableRow>
+                            
+                            <TableCell className={styles.size} align="center">
+                              {keyword("twitter_user_title")}
+                            </TableCell>
                             <TableCell className={styles.size} align="center">
                               {keyword("twitter_user_name_13")}
                             </TableCell>
@@ -525,6 +496,10 @@ const FacebookResults = (props) => {
 
                             return (
                               <TableRow key={key}>
+                                
+                                <TableCell align="center" scope="row" size="small">
+                                  {comment.authorDisplayName}
+                                </TableCell>
                                 <TableCell align="center" size="small">
                                   {comment.publishedAt}
                                 </TableCell>
@@ -537,25 +512,264 @@ const FacebookResults = (props) => {
                         </TableBody>
                       </Table>
                     </AccordionDetails>
-                    <Box>{keyword("page_number") + count_comments}</Box>
                     <Button
                       variant="contained"
                       aria-controls="simple-menu"
                       aria-haspopup="true"
-                      onClick={handleClick_previous_page}
-                    >
-                      {keyword("previous_button")}
+                      color={"primary"}
+                      className={classes.button}
+                      onClick={handleClick_first_page}
+                    >                     
+                      <SkipPreviousIcon/>
                     </Button>
                     <Button
                       variant="contained"
                       aria-controls="simple-menu"
                       aria-haspopup="true"
+                      color={"primary"}
+                      className={classes.button}
+                      onClick={handleClick_previous_page}
+                    >
+                      <NavigateBeforeIcon/>
+                      {/*keyword("previous_button")*/}
+                    </Button>
+                    <div className={styles.inline}>
+                    {"  "+ count_comments +"  "+keyword("page_number") +"  "+ last_page_all_comments+"  "}
+                    </div>
+                    <Button
+                      variant="contained"
+                      aria-controls="simple-menu"
+                      aria-haspopup="true"
+                      color={"primary"}
+                      className={classes.button}
                       onClick={handleClick_next_page}
                     >
-                      {keyword("next_button")}
+                      <NavigateNextIcon/>                    
+                      {/*keyword("next_button")*/}
+                    </Button>
+                    <Button
+                      variant="contained"
+                      aria-controls="simple-menu"
+                      aria-haspopup="true"
+                      color={"primary"}
+                      className={classes.button}
+                      onClick={handleClick_last_page}
+                    >                     
+                      <SkipNextIcon/> 
                     </Button>
                   </Accordion>
                 )}
+                 <Box m={2} />
+                {
+                  //verifiedComments.length > 0 &&
+                  <Accordion>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1bh-content"
+                      id="panel1bh-header"
+                    >
+                      <Typography className={classes.heading}>
+                        {keyword("api_comments_verified")}
+                      </Typography>
+                      <Typography className={classes.secondaryHeading}>
+                        {" "}
+                        
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Table
+                        className={classes.table}
+                        size="small"
+                        aria-label="a dense table"
+                      >
+                        <TableHead>
+                          <TableRow>
+                          <TableCell className={styles.size} align="center">
+                              {keyword("twitter_user_title")}
+                            </TableCell>
+                            <TableCell className={styles.size} align="center">
+                              {keyword("twitter_user_name_13")}
+                            </TableCell>
+                            <TableCell align="center">
+                              {keyword("twitter_user_name_5")}
+                            </TableCell>
+                          </TableRow>
+                        </TableHead>
+
+                        <TableBody className={styles.container}>
+                          {verifiedComments.map((comment, key) => {
+                            return (
+                              <TableRow key={key}>
+                                
+                                <TableCell align="center" scope="row" size="small">
+                                  {comment.authorDisplayName}
+                                </TableCell>
+                                <TableCell align="center" size="small">
+                                  {comment.publishedAt}
+                                </TableCell>
+                                <TableCell align="left" size="small">
+                                  {comment.textDisplay}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+                    </AccordionDetails>
+                    <Button
+                      variant="contained"
+                      aria-controls="simple-menu"
+                      aria-haspopup="true"
+                      color={"primary"}
+                      className={classes.button}
+                      onClick={handleClick_first_page2}
+                    >                     
+                      <SkipPreviousIcon/>
+                    </Button>
+                    <Button
+                      variant="contained"
+                      aria-controls="simple-menu"
+                      aria-haspopup="true"
+                      color={"primary"}
+                      className={classes.button}
+                      onClick={handleClick_previous_page2}
+                    >  
+                     <NavigateBeforeIcon/>                    
+                      {/*keyword("previous_button")*/}
+                    </Button>
+                    <div className={styles.inline}>
+                    {"  "+ count_verified_comments +"  "+keyword("page_number")+"  "+ last_page_verified_comments+"  "}
+                    </div>
+                    <Button
+                      variant="contained"
+                      aria-controls="simple-menu"
+                      aria-haspopup="true"
+                      color={"primary"}
+                      className={classes.button}
+                      onClick={handleClick_next_page2}
+                    >
+                      <NavigateNextIcon/>                    
+                      {/*keyword("next_button")*/}
+                    </Button>
+                    
+                    <Button
+                      variant="contained"
+                      aria-controls="simple-menu"
+                      aria-haspopup="true"
+                      color={"primary"}
+                      className={classes.button}
+                      onClick={handleClick_last_page2}
+                    >                     
+                      <SkipNextIcon/> 
+                    </Button>
+                  </Accordion>
+                }      
+                
+                <Box m={2} />
+                {
+                  //linkComments.length > 0 &&
+                  <Accordion>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1bh-content"
+                      id="panel1bh-header"
+                    >
+                      <Typography className={classes.heading}>
+                        {keyword("link_comments")}
+                      </Typography>
+                      <Typography className={classes.secondaryHeading}>
+                        {" "}
+                        
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Table
+                        className={classes.table}
+                        size="small"
+                        aria-label="a dense table"
+                      >
+                        <TableHead>
+                          <TableRow>
+                          <TableCell className={styles.size} align="center">
+                              {keyword("twitter_user_title")}
+                            </TableCell>
+                            <TableCell className={styles.size} align="center">
+                              {keyword("twitter_user_name_13")}
+                            </TableCell>
+                            <TableCell align="center">
+                              {keyword("twitter_user_name_5")}
+                            </TableCell>
+                          </TableRow>
+                        </TableHead>
+
+                        <TableBody className={styles.container}>
+                          {linkComments.map((comment, key) => {
+                            return (
+                              <TableRow key={key}>
+                                
+                                <TableCell align="center" scope="row" size="small">
+                                  {comment.authorDisplayName}
+                                </TableCell>
+                                <TableCell align="center" size="small">
+                                  {comment.publishedAt}
+                                </TableCell>
+                                <TableCell align="left" size="small">
+                                  {comment.textDisplay}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+                    </AccordionDetails>
+                    <Button
+                      variant="contained"
+                      aria-controls="simple-menu"
+                      aria-haspopup="true"
+                      color={"primary"}
+                      className={classes.button}
+                      onClick={handleClick_first_page1}
+                    >                     
+                      <SkipPreviousIcon/>
+                    </Button>
+                    <Button
+                      variant="contained"
+                      aria-controls="simple-menu"
+                      aria-haspopup="true"
+                      color={"primary"}
+                      className={classes.button}
+                      onClick={handleClick_previous_page1}
+                    >  
+                     <NavigateBeforeIcon/>                    
+                      {/*keyword("previous_button")*/}
+                    </Button>
+                    <div className={styles.inline}>
+                    { "  "+ count_link_comments +"  "+keyword("page_number")+"  "+ last_page_link_comments+"  "}
+                    </div>
+                    <Button
+                      variant="contained"
+                      aria-controls="simple-menu"
+                      aria-haspopup="true"
+                      color={"primary"}
+                      className={classes.button}
+                      onClick={handleClick_next_page1}
+                    >
+                      <NavigateNextIcon/>                    
+                      {/*keyword("next_button")*/}
+                    </Button>
+                    <Button
+                      variant="contained"
+                      aria-controls="simple-menu"
+                      aria-haspopup="true"
+                      color={"primary"}
+                      className={classes.button}
+                      onClick={handleClick_last_page1}
+                    >                     
+                      <SkipNextIcon/> 
+                    </Button>
+                  </Accordion>
+                }
+
               </div>
               <Box m={4} />
               {/*report.mentioned_locations &&

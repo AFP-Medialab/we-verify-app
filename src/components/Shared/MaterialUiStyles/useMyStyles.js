@@ -548,7 +548,8 @@ const useMyStyles = makeStyles(theme => ({
     dropZone: {
         border: 'dashed grey 2px',
         borderRadius: "25px",
-        height: "25vh"
+        height: "25vh",
+        minHeight: "200px"
     },
 
     dropZoneInside: {
@@ -559,7 +560,8 @@ const useMyStyles = makeStyles(theme => ({
 
 
     imageDropped: {
-        height: "25vh"
+        height: "25vh",
+        minHeight: "200px"
     },
 
     inputContainer:{

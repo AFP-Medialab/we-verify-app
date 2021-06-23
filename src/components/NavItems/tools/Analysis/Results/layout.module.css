@@ -8,4 +8,14 @@
   font-weight: normal;
   width:180px;
 }  
+.margin{
+  text-align: center;
+  margin-left: 100px;
+}
+.inline{
+  display:inline-block;
+  font-size:medium;
+  padding-right: 30px;
+  padding-left: 30px;
+}
   

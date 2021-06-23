@@ -50,7 +50,7 @@ const DrawerItem = (props) => {
         },
         {
             content: <AnalysisImg/>,
-            footer: <Footer type={"afp"}/>
+            footer: <Footer type={"iti"}/>
         },
         {
             content: <Magnifier/>,

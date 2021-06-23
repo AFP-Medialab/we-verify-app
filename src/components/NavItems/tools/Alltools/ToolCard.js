@@ -7,9 +7,13 @@ import Typography from "@material-ui/core/Typography";
 import NewReleasesIcon from '@material-ui/icons/NewReleases';
 import FiberNewIcon from '@material-ui/icons/FiberNew';
 import LockIcon from '@material-ui/icons/Lock';
+
+import { ReactComponent as ImprovedIcon } from '../../../NavBar/images/SVG/Improved.svg';
+
 import isAuthenticated from "./AdvancedTools/AdvancedTools";
 
 import AuthenticationIcon from "./AdvancedTools/AuthenticationIcon";
+
 
 
 export class ToolCard extends Component {
@@ -106,8 +110,34 @@ export class ToolCard extends Component {
                                     alignItems="center"
                                 >
 
+
+                            <Grid
+                                container
+                                direction="row"
+                                alignItems="center"
+                            >
+
+                                <Grid item>
+                                    {this.props.icon}                   
+                                </Grid>
+                                <Grid item>
+                                    <Box ml={1}/>
+                                </Grid>
+
+                                <Grid item>
+                                    <Typography variant="h6">{this.props.name}</Typography>
+                                </Grid>
+
+                                {showRedesign &&
+                                    <Grid item style={{ marginLeft: 'auto', color: "#F44336" }} >
+                                        <Box mr={-1}>
+                                            <ImprovedIcon title="Upgraded" width="40px" height="40px" />
+                                        </Box>
+                                        
+
                                     <Grid item>
                                         {this.props.icon}                   
+
                                     </Grid>
                                     <Grid item>
                                         <Box ml={1}/>
