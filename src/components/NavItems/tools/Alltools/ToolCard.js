@@ -104,48 +104,24 @@ export class ToolCard extends Component {
 
 
                             <Box mr={1}>
+
                                 <Grid
                                     container
                                     direction="row"
                                     alignItems="center"
                                 >
 
-
-                            <Grid
-                                container
-                                direction="row"
-                                alignItems="center"
-                            >
-
-                                <Grid item>
-                                    {this.props.icon}                   
-                                </Grid>
-                                <Grid item>
-                                    <Box ml={1}/>
-                                </Grid>
-
-                                <Grid item>
-                                    <Typography variant="h6">{this.props.name}</Typography>
-                                </Grid>
-
-                                {showRedesign &&
-                                    <Grid item style={{ marginLeft: 'auto', color: "#F44336" }} >
-                                        <Box mr={-1}>
-                                            <ImprovedIcon title="Upgraded" width="40px" height="40px" />
-                                        </Box>
-                                        
-
                                     <Grid item>
                                         {this.props.icon}                   
-
                                     </Grid>
                                     <Grid item>
                                         <Box ml={1}/>
                                     </Grid>
 
-                                    <Grid item xs>
+                                    <Grid item>
                                         <Typography variant="h6">{this.props.name}</Typography>
                                     </Grid>
+
 
                                     {showRedesign &&
                                         <Grid item style={{ marginLeft: 'auto', color: "#F44336" }} >
@@ -167,9 +143,10 @@ export class ToolCard extends Component {
                                             </Box>  
                                         </Grid>
                                     }
-                                            
+                                                
                                 </Grid>
                             </Box>
+                            
 
 
                             <Box m={1} />
@@ -180,6 +157,8 @@ export class ToolCard extends Component {
                                     this.props.description}
                                 </span>
                             </div>
+
+                            
 
 
 
