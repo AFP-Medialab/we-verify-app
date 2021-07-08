@@ -74,6 +74,19 @@ import { changeLanguage } from "../../redux/actions";
 import Button from "@material-ui/core/Button";
 import Alert from "@material-ui/lab/Alert";
 
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Typography from "@material-ui/core/Typography";
+
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+
+import Grid from "@material-ui/core/Grid";
+
+import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
+
 
 function a11yProps(index) {
     return {
@@ -355,6 +368,10 @@ const NavBar = (props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    const [stateStatisticsCookie, setStateStatisticsCookie] = React.useState(true);
+
+    const [showExpl1, setShowExpl1] = React.useState(false);
+    const [showExpl2, setShowExpl2] = React.useState(false);
 
     return (
         <div className={classes.flex}>
@@ -465,7 +482,112 @@ const NavBar = (props) => {
                 }
                 {
                     cookiesUsage === null &&
-                    <Snackbar
+
+                    <div>
+                    <Dialog
+                        fullWidth
+                        maxWidth={'xs'}
+                        open={true}
+                        onClose={null}
+                        aria-labelledby="max-width-dialog-title"
+                    >
+                        <Box p={2}>
+                            <DialogTitle id="max-width-dialog-title">
+                                <Typography gutterBottom style={{ color: "#51A5B2", fontSize: "24px" }}>
+                                    We use cookies
+                                </Typography>
+                            </DialogTitle>
+                            <DialogContent style={{ height: '270px' }}>
+
+                                <Typography variant="body2">
+                                    We need your authorization to use cookies, this is needed for the plugin to work properly, still, no personal data will be saved. You can chose what cookies you allow us to use. You can read more about it in our privacy policy
+                                </Typography>
+
+                                <Box m={4} />
+
+                                    <Grid
+                                        container
+                                        direction="column"
+                                        justify="flex-start"
+                                        alignItems="flex-start"
+                                    >
+
+
+                                        <Grid item>
+                                            <FormControlLabel
+                                                control={<Checkbox color="primary" disabled checked={true} onChange={null} name="strictly" />}
+                                                label="Strictly necessary"
+                                            />
+                                            <IconButton aria-label="delete" className={classes.margin} size="small" onClick={() => setShowExpl1(!showExpl1)}>
+                                                <HelpOutlineIcon fontSize="inherit" />
+                                            </IconButton>
+                                        </Grid>
+
+
+                                        {showExpl1 &&
+                                        <Grid item>
+                                            <Box ml={4}>
+                                                <Typography variant="body2" style={{ color: "#828282"}}>
+                                                We need this cookies for the language funcionality
+                                            </Typography>
+                                            </Box>
+                                        </Grid>
+                                        }
+
+                                        <Grid item>
+                                            <FormControlLabel
+                                                control={<Checkbox color="primary" checked={stateStatisticsCookie} name="strictly" />}
+                                                label="Statistics"
+                                            />
+                                            <IconButton aria-label="delete" className={classes.margin} size="small" onClick={() => setShowExpl2(!showExpl2)}>
+                                                <HelpOutlineIcon fontSize="inherit" />
+                                            </IconButton>
+                                        </Grid>
+
+                                        {showExpl2 &&
+                                        <Grid item>
+                                            <Box ml={4}>
+                                                <Typography variant="body2" style={{ color: "#828282" }}>
+                                                We need this cookies to perform statistical analysis with google analystics
+                                            </Typography>
+                                            </Box>
+                                        </Grid>
+                                        }
+
+                                    </Grid>
+
+
+                                
+
+                            </DialogContent>
+                            <DialogActions>
+
+
+                                <Button variant="contained" color="primary" onClick={null} fullWidth>
+                                    Accept selection
+                                </Button>
+
+                            </DialogActions>
+                        </Box>
+                    </Dialog>
+
+                    
+                    
+
+                    </div>
+                }
+                <FeedBack />
+            </main>
+        </div>
+    );
+};
+export default React.memo(NavBar);
+
+
+
+/*
+
+<Snackbar
                         anchorOrigin={{
                             vertical: 'top',
                             horizontal: 'center',
@@ -477,10 +599,6 @@ const NavBar = (props) => {
                             <Button key={"cookies_accept"} color={"primary"} size={"small"} onClick={() => dispatch(setTrue())}> {keyword("cookies_accept")} </Button>,
                         ]}
                     />
-                }
-                <FeedBack />
-            </main>
-        </div>
-    );
-};
-export default React.memo(NavBar);
+
+
+*/
